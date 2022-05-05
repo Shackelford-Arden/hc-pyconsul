@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "pyconsul"
+version = "0.1.0"
+description = "API client for HashiCorp Consul"
+authors = ["Arden Shackelford <arden@ardens.tech>"]
+license = "Apache 2.0"
+
+[tool.poetry.dependencies]
+python = "^3.7,<=4.0"
+httpx = "^0.22.0"
+pydantic = "^1.9.0"
+
+[tool.poetry.dev-dependencies]
+pytest-cov = "^3.0.0"
+pylint = "^2.13.8"
+flake8 = "^4.0.1"
+mypy = "^0.950"
+respx = "^0.19.2"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = "missing-module-docstring,missing-class-docstring,unnecessary-pass,raise-missing-from,too-few-public-methods"
+extension-pkg-whitelist = "pydantic"
+
+[tool.pylint.'FORMAT']
+max-line-length = 150
