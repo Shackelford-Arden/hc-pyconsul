@@ -1,11 +1,13 @@
-from typing import List, Union
+from typing import List
+from typing import Union
 
 import httpx
 from httpx import HTTPStatusError
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from pyconsul.lib.exceptions import Unauthenticated, UnknownResourceCalled
+from pyconsul.lib.exceptions import Unauthenticated
+from pyconsul.lib.exceptions import UnknownResourceCalled
 
 
 @dataclass
@@ -13,7 +15,7 @@ class ConsulAPI:
     address: str = Field(default="http://localhost:8500", env='CONSUL_HTTP_ADDR', description='Base address for Consul cluster/host.')
     token: str = Field(default=None, env='CONSUL_HTTP_TOKEN', description='Valid Consul token.')
     namespace: str = Field(default=None, env='CONSUL_NAMESPACE', description='Consul namespace to use for querying resources.')
-    headers: dict = Field(default={}, description='Custom headers to include on each request.')
+    headers: dict = Field(default_factory=dict, description='Custom headers to include on each request.')
 
     def _get(self, endpoint: str) -> Union[dict, str, List[str]]:
         """
@@ -30,7 +32,8 @@ class ConsulAPI:
 
         Raises
         ------
-        HTTPStatusError
+        Unauthenticated
+        UnknownResourceCalled
         """
 
         if self.token:
