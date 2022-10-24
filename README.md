@@ -1,6 +1,6 @@
 # pyconsul
 
-API client for [HashiCorp Consul](https://www.consul.io).
+API client for [HashiCorp's Consul](https://www.consul.io).
 
 # Background
 
@@ -11,9 +11,11 @@ Main two motivations behind this project:
 - Learn about creating and maintaining an OSS project.
 - Create a client library that supported OpenTelemetry.
 
-At work we make use of the entire Hashi stack (Consul, Nomad, Vault, etc) and
+At work we make use of the entire HashiCorp stack (Consul, Nomad, Vault, etc) and
 for some of our projects, we're split between Go and Python. Most of the Python
-clients that exist today didn't seem to fit the need that we had.
+clients that exist today didn't seem to fit the need that we had. Mainly that we are
+striving to be more strongly typed to ease the development of either small scripts
+or larger projects.
 
 That and we've heavily invested into OpenTelemetry, which is something that seems
 to be lacking in a number of projects. If it wasn't for the desire that I had

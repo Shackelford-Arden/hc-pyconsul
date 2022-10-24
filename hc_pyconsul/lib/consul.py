@@ -6,8 +6,8 @@ from httpx import HTTPStatusError
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from pyconsul.lib.exceptions import Unauthenticated
-from pyconsul.lib.exceptions import UnknownResourceCalled
+from hc_pyconsul.lib.exceptions import Unauthenticated
+from hc_pyconsul.lib.exceptions import UnknownResourceCalled
 
 
 @dataclass
