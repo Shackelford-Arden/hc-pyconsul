@@ -1,8 +1,8 @@
 import pytest
 import respx
 
-from pyconsul.lib.consul import ConsulAPI
-from pyconsul.lib.exceptions import Unauthenticated
+from hc_pyconsul.lib.consul import ConsulAPI
+from hc_pyconsul.lib.exceptions import Unauthenticated
 
 
 @respx.mock

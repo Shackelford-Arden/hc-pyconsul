@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "pyconsul"
+name = "hc_pyconsul"
 version = "0.1.0"
 description = "API client for HashiCorp Consul"
 authors = ["Arden Shackelford <arden@ardens.tech>"]
 license = "Apache 2.0"
 packages = [
-    {include = "pyconsul"},
-    {include = "pyconsul/py.typed"}
+    { include = "hc_pyconsul" },
+    { include = "hc_pyconsul/py.typed" }
 ]
 
 
