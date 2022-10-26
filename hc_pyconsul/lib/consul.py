@@ -1,9 +1,8 @@
-from typing import List
-from typing import Union
+import os
+from typing import Optional
 
 import httpx
 from httpx import HTTPStatusError
-from pydantic import Field
 from pydantic.dataclasses import dataclass
 
 from hc_pyconsul.lib.exceptions import Unauthenticated
@@ -12,12 +11,22 @@ from hc_pyconsul.lib.exceptions import UnknownResourceCalled
 
 @dataclass
 class ConsulAPI:
-    address: str = Field(default="http://localhost:8500", env='CONSUL_HTTP_ADDR', description='Base address for Consul cluster/host.')
-    token: str = Field(default=None, env='CONSUL_HTTP_TOKEN', description='Valid Consul token.')
-    namespace: str = Field(default=None, env='CONSUL_NAMESPACE', description='Consul namespace to use for querying resources.')
-    headers: dict = Field(default_factory=dict, description='Custom headers to include on each request.')
+    address: str = "http://localhost:8500"
+    token: Optional[str] = None
+    namespace: Optional[str] = None
 
-    def _get(self, endpoint: str) -> Union[dict, str, List[str]]:
+    def __post_init__(self):
+
+        if os.environ.get('CONSUL_HTTP_ADDR'):
+            self.address = os.environ.get('CONSUL_HTTP_ADDR')
+
+        if os.environ.get('CONSUL_HTTP_TOKEN'):
+            self.token = os.environ.get('CONSUL_HTTP_TOKEN')
+
+        if os.environ.get('CONSUL_NAMESPACE'):
+            self.namespace = os.environ.get('CONSUL_NAMESPACE')
+
+    def _get(self, endpoint: str, **kwargs):
         """
         Specifically making GET requests to Consul that expect JSON.
 
@@ -28,7 +37,7 @@ class ConsulAPI:
 
         Returns
         -------
-        response: Union[dict, str, List[str]]
+        response
 
         Raises
         ------
@@ -36,21 +45,25 @@ class ConsulAPI:
         UnknownResourceCalled
         """
 
+        call_headers = kwargs.get('headers', {})
+
         if self.token:
-            self.headers.update(
+            call_headers.update(
                 {
                     'X-Consul-Token': self.token
                 }
             )
 
-        params = {}
         if self.namespace:
-            params = {'namespace': self.namespace}
+            if not kwargs.get('params'):
+                kwargs['params'] = {}
+
+            kwargs['params'].update({'namespace': self.namespace})
 
         url = f'{self.address}/v1{endpoint}'
         try:
 
-            response = httpx.get(url, headers=self.headers, params=params)
+            response = httpx.get(url, headers=call_headers, **kwargs)
 
             response.raise_for_status()
 
