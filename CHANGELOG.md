@@ -11,6 +11,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.0] - 2022-10-24
 
+### Changed
+
+- Switched how we parse env vars for the following:
+  - `CONSUL_HTTP_ADDR`
+  - `CONSUL_HTTT_TOKEN`
+  - `CONSUL_NAMESPACE`
+  - 
+
 ### Added
 
 - `/catalog/services` support with a basic example
