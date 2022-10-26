@@ -1,7 +1,5 @@
 import os
-from typing import List
 from typing import Optional
-from typing import Union
 
 import httpx
 from httpx import HTTPStatusError
@@ -28,7 +26,7 @@ class ConsulAPI:
         if os.environ.get('CONSUL_NAMESPACE'):
             self.namespace = os.environ.get('CONSUL_NAMESPACE')
 
-    def _get(self, endpoint: str, **kwargs) -> Union[dict, str, List[str]]:
+    def _get(self, endpoint: str, **kwargs):
         """
         Specifically making GET requests to Consul that expect JSON.
 
@@ -39,7 +37,7 @@ class ConsulAPI:
 
         Returns
         -------
-        response: Union[dict, str, List[str]]
+        response
 
         Raises
         ------
@@ -56,15 +54,16 @@ class ConsulAPI:
                 }
             )
 
-        params = kwargs.get('params', {})
-
         if self.namespace:
-            params.update({'namespace': self.namespace})
+            if not kwargs.get('params'):
+                kwargs['params'] = {}
+
+            kwargs['params'].update({'namespace': self.namespace})
 
         url = f'{self.address}/v1{endpoint}'
         try:
 
-            response = httpx.get(url, headers=self.headers, params=params, **kwargs)
+            response = httpx.get(url, headers=call_headers, **kwargs)
 
             response.raise_for_status()
 
