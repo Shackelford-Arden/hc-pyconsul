@@ -4,12 +4,14 @@ from typing import List
 from pydantic.dataclasses import dataclass
 
 from hc_pyconsul.lib.consul import ConsulAPI
+from hc_pyconsul.lib.tracing import tracing
 
 
 @dataclass
 class ConsulCatalog(ConsulAPI):
 
     # pylint: disable=invalid-name
+    @tracing('List Services')
     def list_services(self, dc: str = None, node_meta: List[str] = None, namespace: str = None) -> Dict[str, List[str]]:
         """
         Link to official docs:
@@ -49,6 +51,6 @@ class ConsulCatalog(ConsulAPI):
                 'ns': namespace
             })
 
-        results = self._get(endpoint='/catalog/services', params=params)
+        results = self.call_api(endpoint='/catalog/services', verb='GET', params=params)
 
         return results

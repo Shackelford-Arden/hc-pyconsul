@@ -14,6 +14,7 @@ packages = [
 python = ">=3.8,<4.0"
 httpx = "^0.23.0"
 pydantic = "^1.9.0"
+opentelemetry-api = "^1.13.0"
 
 [tool.poetry.group.testing.dependencies]
 pytest-cov = "^3.0.0"
@@ -33,3 +34,7 @@ extension-pkg-whitelist = "pydantic"
 
 [tool.pylint.'FORMAT']
 max-line-length = 150
+
+[tool.mypy]
+namespace_packages = true
+plugins = ["pydantic.mypy"]
