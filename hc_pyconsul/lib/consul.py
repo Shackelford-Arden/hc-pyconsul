@@ -1,12 +1,12 @@
 import os
+from typing import Any
 from typing import Optional
 
 import httpx
-from httpx import HTTPStatusError
 from pydantic.dataclasses import dataclass
 
-from hc_pyconsul.lib.exceptions import Unauthenticated
-from hc_pyconsul.lib.exceptions import UnknownResourceCalled
+from hc_pyconsul.exceptions import Unauthenticated
+from hc_pyconsul.exceptions import UnknownResourceCalled
 
 
 @dataclass
@@ -14,6 +14,7 @@ class ConsulAPI:
     address: str = "http://localhost:8500"
     token: Optional[str] = None
     namespace: Optional[str] = None
+    timeout: int = 15
 
     def __post_init__(self):
 
@@ -26,33 +27,34 @@ class ConsulAPI:
         if os.environ.get('CONSUL_NAMESPACE'):
             self.namespace = os.environ.get('CONSUL_NAMESPACE')
 
-    def _get(self, endpoint: str, **kwargs):
+    def call_api(self, endpoint: str, verb: str, **kwargs) -> Any:
         """
-        Specifically making GET requests to Consul that expect JSON.
+        Generic method to make API calls.
 
         Parameters
         ----------
         endpoint: str
-            The specific endpoint to hit.
+        verb: str
+        span=None
 
         Returns
         -------
-        response
+        return_data: Union[str, dict, list]
 
         Raises
         ------
-        Unauthenticated
-        UnknownResourceCalled
+        exceptions.Unauthenticated
+        exceptions.UnknownResourceCalled
         """
 
-        call_headers = kwargs.get('headers', {})
-
+        headers = kwargs.get('headers', {})
         if self.token:
-            call_headers.update(
+            headers.update(
                 {
                     'X-Consul-Token': self.token
                 }
             )
+        kwargs['timeout'] = self.timeout
 
         if self.namespace:
             if not kwargs.get('params'):
@@ -61,18 +63,28 @@ class ConsulAPI:
             kwargs['params'].update({'namespace': self.namespace})
 
         url = f'{self.address}/v1{endpoint}'
+
         try:
+            request: httpx.Response = getattr(httpx, verb.lower())(
+                url, headers=headers, **kwargs
+            )
 
-            response = httpx.get(url, headers=call_headers, **kwargs)
+            request.raise_for_status()
+        except httpx.HTTPStatusError as request_error:
+            status_code = request_error.response.status_code
 
-            response.raise_for_status()
-
-        # Attempt to gracefully handle Consul's documented response codes with helpful exceptions
-        except HTTPStatusError as http_error:
-            if http_error.response.status_code == 403:
+            if status_code == 403:
                 raise Unauthenticated('API called failed to due being unauthenticated. Maybe your token expired?')
-            if http_error.response.status_code == 404:
+            if status_code == 404:
                 raise UnknownResourceCalled('Received a 404. Check supported API endpoints for your version of Consul.')
-            raise http_error
 
-        return response.json()
+            raise request_error
+
+        # Dynamically return the appropriate type.
+        string_types = ['text/plain', 'application/octet-stream']
+        if request.headers['content-type'] in string_types:
+            return_data = request.text
+        else:
+            return_data = request.json()
+
+        return return_data
