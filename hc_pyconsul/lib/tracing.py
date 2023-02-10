@@ -7,18 +7,11 @@ tracer = trace.get_tracer(__name__)
 
 def tracing(name):
     """Used to instrument pieces of the library with OpenTelemetry"""
+
     def outter_wrap(func):
         @functools.wraps(func)
         def wrapper(self, *args, **kwargs):
-            context = kwargs.get('context', None)
-            with tracer.start_as_current_span(name=f'Consul - {name}', context=context, kind=trace.SpanKind.CLIENT) as span:
-
-                # Remove context from the kwargs as the receiving
-                # method won't be looking for it.
-                try:
-                    del kwargs['context']
-                except KeyError:
-                    pass
+            with tracer.start_as_current_span(name=f'Consul - {name}', kind=trace.SpanKind.CLIENT) as span:
 
                 try:
                     results = func(self, *args, **kwargs)
