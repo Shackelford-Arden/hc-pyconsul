@@ -37,4 +37,14 @@ class TestListServiceInstances(TestCase):
 
         services: list[ServiceHealth] = self.test_health.list_service_instances(service='foobar')
 
-        self.assertEqual(services[0].service.id, 'redis')
+        self.assertEqual('redis', services[0].service.id)
+
+    @respx.mock
+    def test_valid_response_with_nomad_service(self):
+        response = respx.get('http://localhost:8500/v1/health/service/foobar')
+        response.return_value = Response(200, json=responses.SERVICE_LIST_NOMAD)
+
+        services: list[ServiceHealth] = self.test_health.list_service_instances(service='foobar')
+
+        self.assertEqual('86c6736f', services[0].alloc_id.id)
+        self.assertEqual('86c6736f-33d2-e3b1-69a2-8189031eb599', services[0].alloc_id.id_long)

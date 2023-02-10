@@ -22,7 +22,7 @@ class TestListServices(TestCase):
             "postgresql": ["primary", "secondary"]
         }
 
-        response = respx.get('http://localhost:8500/v1/catalog/services')
+        response = respx.get(url='http://localhost:8500/v1/catalog/services')
         response.return_value = Response(200, json=call_response)
 
         services = self.test_catalog.list_services()

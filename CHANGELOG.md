@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add GitHub Action to push package to PyPi
 
+## [0.3.0] - 2023-01-13
+
+### Added
+
+- A little context awareness when working with services running in Nomad.
+  - Example, `ServiceHealth` now has the `alloc_id` property
+
+### Changed
+
+- Limiting usage of imports from `typing`
+  - For example, moving more hinting of lists from `List` to `list`
+
+### Internal
+
+- Added `Makefile` to make a few things easier to call all the time.
+
 ## [0.2.0] - 2022-10-27
 
 ### Added

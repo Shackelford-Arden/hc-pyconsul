@@ -1,6 +1,9 @@
 from pydantic import BaseModel
 from pydantic import Field
 
+from hc_pyconsul.helpers.services import extract_alloc_id_from_service_name
+from hc_pyconsul.models.helpers import NomadAllocation
+
 
 class HealthCheck(BaseModel):
     node: str = Field(..., alias='Node')
@@ -60,3 +63,9 @@ class ServiceHealth(BaseModel):
     node: ServiceNode = Field(..., alias='Node')
     service: Service = Field(..., alias='Service')
     checks: list[HealthCheck] = Field(default_factory=list, alias='Checks')
+
+    @property
+    def alloc_id(self) -> NomadAllocation:
+        """Attempts to extract out the Nomad allocation ID for the given service check."""
+
+        return extract_alloc_id_from_service_name(service_id=self.service.id)
