@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel
 from pydantic import Field
 
@@ -24,8 +26,10 @@ class HealthWeights(BaseModel):
 
 
 class NodeTaggedAddresses(BaseModel):
-    lan: str = Field(..., alias='lan')
-    wan: str = Field(..., alias='wan')
+    lan: Optional[str] = Field(None, alias='lan')
+    lan_ipv4: Optional[str] = Field(None, alias='lan_ipv4')
+    wan: Optional[str] = Field(None, alias='wan')
+    wan_ipv4: Optional[str] = Field(None, alias='wan_ipv4')
 
 
 class ServiceNode(BaseModel):
@@ -38,13 +42,18 @@ class ServiceNode(BaseModel):
 
 
 class TaggedAddress(BaseModel):
-    address: str = Field(..., alias='address')
-    port: int = Field(..., alias='port')
+    address: str = Field(..., alias='Address')
+    port: int = Field(..., alias='Port')
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 class ServiceTaggedAddresses(BaseModel):
-    lan: TaggedAddress = Field(..., alias='lan')
-    wan: TaggedAddress = Field(..., alias='wan')
+    lan: Optional[TaggedAddress] = Field(None, alias='lan')
+    wan: Optional[TaggedAddress] = Field(None, alias='wan')
+    lan_ipv4: Optional[TaggedAddress] = Field(None, alias='lan_ipv4')
+    wan_ipv4: Optional[TaggedAddress] = Field(None, alias='wan_ipv4')
 
 
 class Service(BaseModel):

@@ -5,9 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.3.1] - 2023-01-13
 
-- Add GitHub Action to push package to PyPi
+#### Fixed
+
+- Ensuring `*_ipv4` TaggedAddresses are accounted for.
+  - Proper casing was adjusted for `address` and `port` TaggedAddress attributes.
 
 ## [0.3.0] - 2023-01-13
 
@@ -34,7 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `timeout` option to the base `ConsulAPI` class to ensure we have a default timeout
   set but allow it to be overriden.
 
-
 ## [0.1.0] - 2022-10-24
 
 ### Changed
@@ -43,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `CONSUL_HTTP_ADDR`
   - `CONSUL_HTTT_TOKEN`
   - `CONSUL_NAMESPACE`
-  - 
+  -
 
 ### Added
 
