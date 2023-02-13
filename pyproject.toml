@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hc_pyconsul"
-version = "0.3.0"
+version = "0.3.1"
 description = "API client for HashiCorp Consul"
 authors = ["Arden Shackelford <arden@ardens.tech>"]
 license = "Apache 2.0"

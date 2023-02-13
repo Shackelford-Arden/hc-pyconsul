@@ -40,6 +40,16 @@ class TestListServiceInstances(TestCase):
         self.assertEqual('redis', services[0].service.id)
 
     @respx.mock
+    def test_valid_response_tagged_addresses(self):
+        response = respx.get('http://localhost:8500/v1/health/service/foobar')
+        response.return_value = Response(200, json=responses.LAN_WAN_IPV4_TAGGED_ATTRIBUTES)
+
+        services: list[ServiceHealth] = self.test_health.list_service_instances(service='foobar')
+
+        self.assertEqual('10.1.10.12', services[0].service.tagged_addresses.lan.address)
+        self.assertEqual('198.18.1.2', services[0].service.tagged_addresses.wan.address)
+
+    @respx.mock
     def test_valid_response_with_nomad_service(self):
         response = respx.get('http://localhost:8500/v1/health/service/foobar')
         response.return_value = Response(200, json=responses.SERVICE_LIST_NOMAD)
